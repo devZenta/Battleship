@@ -13,7 +13,8 @@ public class Game {
     private JLabel instructionsLabel;
     private boolean gameInProgress = false;
     private boolean gamePaused = false;
-    private int shipsToPlace = 5;
+    private int[] shipsToPlace = {5, 4, 4, 3, 3, 2};
+    private int currentShipIndex = 0;
     private JTextArea logger;
 
     public Game() {
@@ -99,36 +100,50 @@ public class Game {
 
     private void placeShip(JButton button, int row, int col, JPanel gridPanel) {
         boolean[][] currentGrid = (currentPlayer == 1) ? player1Grid : player2Grid;
+        int shipSize = shipsToPlace[currentShipIndex];
 
-        currentGrid[row][col] = true;
-        button.setBackground(new Color(244, 246, 247));
-        button.setEnabled(false);
+        if (canPlaceShip(currentGrid, row, col, shipSize)) {
+            for (int i = 0; i < shipSize; i++) {
+                currentGrid[row][col + i] = true;
+                gridPanel.getComponent(row * gridSize + col + i).setBackground(new Color(244, 246, 247));
+                gridPanel.getComponent(row * gridSize + col + i).setEnabled(false);
+            }
 
-        shipsToPlace--;
-
-        if (shipsToPlace == 0) {
-            if (currentPlayer == 1) {
-                currentPlayer = 2;
-                shipsToPlace = 5;
-                JOptionPane.showMessageDialog(frame, "Player 2, it's your turn to place your boats !");
-                frame.remove(player1GridPanel);
-                frame.add(player2GridPanel, BorderLayout.CENTER);
-                instructionsLabel.setText("Player 2: Place your boats (5 remaining)");
-                frame.revalidate();
-                frame.repaint();
+            currentShipIndex++;
+            if (currentShipIndex >= shipsToPlace.length) {
+                if (currentPlayer == 1) {
+                    currentPlayer = 2;
+                    currentShipIndex = 0;
+                    JOptionPane.showMessageDialog(frame, "Player 2, it's your turn to place your boats !");
+                    frame.remove(player1GridPanel);
+                    frame.add(player2GridPanel, BorderLayout.CENTER);
+                    instructionsLabel.setText("Player 2: Place your boats (5 remaining)");
+                    frame.revalidate();
+                    frame.repaint();
+                } else {
+                    JOptionPane.showMessageDialog(frame, "All the boats have been placed. The battle begins !");
+                    gameInProgress = true;
+                    currentPlayer = 1;
+                    frame.remove(player2GridPanel);
+                    frame.add(player1AttackGridPanel, BorderLayout.CENTER);
+                    instructionsLabel.setText("Player 1: It's your turn to attack !");
+                    frame.revalidate();
+                    frame.repaint();
+                }
             } else {
-                JOptionPane.showMessageDialog(frame, "All the boats have been placed. The battle begins !");
-                gameInProgress = true;
-                currentPlayer = 1;
-                frame.remove(player2GridPanel);
-                frame.add(player1AttackGridPanel, BorderLayout.CENTER);
-                instructionsLabel.setText("Player 1: It's your turn to attack !");
-                frame.revalidate();
-                frame.repaint();
+                instructionsLabel.setText("Player " + currentPlayer + " : Position your boats (" + shipsToPlace[currentShipIndex] + " remaining)");
             }
         } else {
-            instructionsLabel.setText("Player " + currentPlayer + " : Position your boats (" + shipsToPlace + " remaining)");
+            logAction("Cannot place ship here!");
         }
+    }
+
+    private boolean canPlaceShip(boolean[][] grid, int row, int col, int size) {
+        if (col + size > gridSize) return false;
+        for (int i = 0; i < size; i++) {
+            if (grid[row][col + i]) return false;
+        }
+        return true;
     }
 
     private void attack(JButton button, int row, int col) {
