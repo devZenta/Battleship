@@ -62,7 +62,7 @@ public class Game {
         for (int row = 0; row < gridSize; row++) {
             for (int col = 0; col < gridSize; col++) {
                 JButton button = new JButton();
-                button.setBackground(Color.CYAN);
+                button.setBackground(new Color(44, 62, 80));
 
                 final int currentRow = row;
                 final int currentCol = col;
@@ -101,7 +101,7 @@ public class Game {
         boolean[][] currentGrid = (currentPlayer == 1) ? player1Grid : player2Grid;
 
         currentGrid[row][col] = true;
-        button.setBackground(Color.GRAY);
+        button.setBackground(new Color(244, 246, 247));
         button.setEnabled(false);
 
         shipsToPlace--;
@@ -135,11 +135,11 @@ public class Game {
         boolean[][] targetGrid = (currentPlayer == 1) ? player2Grid : player1Grid;
 
         if (targetGrid[row][col]) {
-            button.setBackground(Color.RED);
+            button.setBackground(new Color(17, 212, 37));
             targetGrid[row][col] = false;
             logAction("Player " + currentPlayer + " hit a boat in " + toGridCoordinate(row, col));
         } else {
-            button.setBackground(Color.BLUE);
+            button.setBackground(new Color(247, 2, 2));
             logAction("Player " + currentPlayer + " missed in " + toGridCoordinate(row, col));
         }
 
