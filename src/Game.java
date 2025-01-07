@@ -24,7 +24,7 @@ public class Game {
 
         frame = new JFrame("BattleShip by zenta . (Hugo Ghesquier)");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(900, 800);
+        frame.setSize(1280, 720);
         frame.setLayout(new BorderLayout());
 
         instructionsLabel = new JLabel("Player 1: Place your boats (5 remaining)");
