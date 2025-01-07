@@ -16,6 +16,7 @@ public class Game {
     private int[] shipsToPlace = {5, 4, 4, 3, 3, 2};
     private int currentShipIndex = 0;
     private JTextArea logger;
+    private boolean placeHorizontal = true;
 
     public Game() {
 
@@ -38,6 +39,14 @@ public class Game {
         quitButton.addActionListener(e -> System.exit(0));
         controlPanel.add(pauseButton);
         controlPanel.add(quitButton);
+
+        JToggleButton orientationToggle = new JToggleButton("Horizontal");
+        orientationToggle.addActionListener(e -> {
+            placeHorizontal = !placeHorizontal;
+            orientationToggle.setText(placeHorizontal ? "Horizontal" : "Vertical");
+        });
+        controlPanel.add(orientationToggle);
+
         frame.add(controlPanel, BorderLayout.SOUTH);
 
         logger = new JTextArea();
@@ -104,9 +113,15 @@ public class Game {
 
         if (canPlaceShip(currentGrid, row, col, shipSize)) {
             for (int i = 0; i < shipSize; i++) {
-                currentGrid[row][col + i] = true;
-                gridPanel.getComponent(row * gridSize + col + i).setBackground(new Color(244, 246, 247));
-                gridPanel.getComponent(row * gridSize + col + i).setEnabled(false);
+                if (placeHorizontal) {
+                    currentGrid[row][col + i] = true;
+                    gridPanel.getComponent(row * gridSize + col + i).setBackground(new Color(244, 246, 247));
+                    gridPanel.getComponent(row * gridSize + col + i).setEnabled(false);
+                } else {
+                    currentGrid[row + i][col] = true;
+                    gridPanel.getComponent((row + i) * gridSize + col).setBackground(new Color(244, 246, 247));
+                    gridPanel.getComponent((row + i) * gridSize + col).setEnabled(false);
+                }
             }
 
             currentShipIndex++;
@@ -139,9 +154,16 @@ public class Game {
     }
 
     private boolean canPlaceShip(boolean[][] grid, int row, int col, int size) {
-        if (col + size > gridSize) return false;
-        for (int i = 0; i < size; i++) {
-            if (grid[row][col + i]) return false;
+        if (placeHorizontal) {
+            if (col + size > gridSize) return false;
+            for (int i = 0; i < size; i++) {
+                if (grid[row][col + i]) return false;
+            }
+        } else {
+            if (row + size > gridSize) return false;
+            for (int i = 0; i < size; i++) {
+                if (grid[row + i][col]) return false;
+            }
         }
         return true;
     }
