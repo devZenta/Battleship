@@ -26,14 +26,14 @@ public class Game {
         frame.setSize(900, 800);
         frame.setLayout(new BorderLayout());
 
-        instructionsLabel = new JLabel("Joueur 1 : Placez vos bateaux (5 restants)");
+        instructionsLabel = new JLabel("Player 1: Place your boats (5 remaining)");
         instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         frame.add(instructionsLabel, BorderLayout.NORTH);
 
         JPanel controlPanel = new JPanel(new FlowLayout());
-        JButton pauseButton = new JButton("Pause");
+        JButton pauseButton = new JButton("Stop");
         pauseButton.addActionListener(e -> togglePause());
-        JButton quitButton = new JButton("Quitter");
+        JButton quitButton = new JButton("Leave");
         quitButton.addActionListener(e -> System.exit(0));
         controlPanel.add(pauseButton);
         controlPanel.add(quitButton);
@@ -84,7 +84,7 @@ public class Game {
 
     private void handleButtonClick(JButton button, int row, int col, JPanel gridPanel) {
         if (gamePaused) {
-            logAction("Le jeu est en pause !");
+            logAction("The game's on pause !");
             return;
         }
 
@@ -110,24 +110,24 @@ public class Game {
             if (currentPlayer == 1) {
                 currentPlayer = 2;
                 shipsToPlace = 5;
-                JOptionPane.showMessageDialog(frame, "Joueur 2, à vous de placer vos bateaux !");
+                JOptionPane.showMessageDialog(frame, "Player 2, it's your turn to place your boats !");
                 frame.remove(player1GridPanel);
                 frame.add(player2GridPanel, BorderLayout.CENTER);
-                instructionsLabel.setText("Joueur 2 : Placez vos bateaux (5 restants)");
+                instructionsLabel.setText("Player 2: Place your boats (5 remaining)");
                 frame.revalidate();
                 frame.repaint();
             } else {
-                JOptionPane.showMessageDialog(frame, "Tous les bateaux ont été placés. Début de la bataille !");
+                JOptionPane.showMessageDialog(frame, "All the boats have been placed. The battle begins !");
                 gameInProgress = true;
                 currentPlayer = 1;
                 frame.remove(player2GridPanel);
                 frame.add(player1AttackGridPanel, BorderLayout.CENTER);
-                instructionsLabel.setText("Joueur 1 : À vous d'attaquer !");
+                instructionsLabel.setText("Player 1: It's your turn to attack !");
                 frame.revalidate();
                 frame.repaint();
             }
         } else {
-            instructionsLabel.setText("Joueur " + currentPlayer + " : Placez vos bateaux (" + shipsToPlace + " restants)");
+            instructionsLabel.setText("Player " + currentPlayer + " : Position your boats (" + shipsToPlace + " remaining)");
         }
     }
 
@@ -137,29 +137,29 @@ public class Game {
         if (targetGrid[row][col]) {
             button.setBackground(Color.RED);
             targetGrid[row][col] = false;
-            logAction("Joueur " + currentPlayer + " a touché un bateau en " + toGridCoordinate(row, col));
+            logAction("Player " + currentPlayer + " hit a boat in " + toGridCoordinate(row, col));
         } else {
             button.setBackground(Color.BLUE);
-            logAction("Joueur " + currentPlayer + " a raté en " + toGridCoordinate(row, col));
+            logAction("Player " + currentPlayer + " missed in " + toGridCoordinate(row, col));
         }
 
         button.setEnabled(false);
 
 
         if (isGameOver()) {
-            JOptionPane.showMessageDialog(frame, "Joueur " + currentPlayer + " a gagné !");
+            JOptionPane.showMessageDialog(frame, "Player " + currentPlayer + " has won !");
             frame.dispose();
             return;
         }
 
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
 
-        JOptionPane.showMessageDialog(frame, "C'est au tour du joueur " + currentPlayer + " de jouer.");
+        JOptionPane.showMessageDialog(frame, "It's the player's turn " + currentPlayer + " to attack !");
 
         frame.remove((currentPlayer == 1) ? player2AttackGridPanel : player1AttackGridPanel);
         frame.add((currentPlayer == 1) ? player1AttackGridPanel : player2AttackGridPanel, BorderLayout.CENTER);
 
-        instructionsLabel.setText("Joueur " + currentPlayer + " : À vous d'attaquer !");
+        instructionsLabel.setText("Player " + currentPlayer + " : It's your turn to attack !");
         frame.revalidate();
         frame.repaint();
     }
@@ -189,6 +189,6 @@ public class Game {
 
     private void togglePause() {
         gamePaused = !gamePaused;
-        logAction("Le jeu est " + (gamePaused ? "en pause" : "repris") + ".");
+        logAction("The game is " + (gamePaused ? "is paused" : "is back on") + ".");
     }
 }
