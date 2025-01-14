@@ -20,18 +20,22 @@ public class Game {
 
     public Game() {
 
+        // Initialisation des grilles des joueurs
         player1Grid = new boolean[gridSize][gridSize];
         player2Grid = new boolean[gridSize][gridSize];
 
+        // Configuration de la fenêtre principale
         frame = new JFrame("BattleShip by zenta . (Hugo Ghesquier)");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1280, 720);
         frame.setLayout(new BorderLayout());
 
+        // Ajout de l'étiquette d'instructions
         instructionsLabel = new JLabel("Player 1: Place your boats (5 remaining)");
         instructionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         frame.add(instructionsLabel, BorderLayout.NORTH);
 
+        // Création du panneau de contrôle avec les boutons de pause et de quitter
         JPanel controlPanel = new JPanel(new FlowLayout());
         JButton pauseButton = new JButton("Stop");
         pauseButton.addActionListener(e -> togglePause());
@@ -40,6 +44,7 @@ public class Game {
         controlPanel.add(pauseButton);
         controlPanel.add(quitButton);
 
+        // Bouton pour changer l'orientation des bateaux
         JToggleButton orientationToggle = new JToggleButton("Horizontal");
         orientationToggle.addActionListener(e -> {
             placeHorizontal = !placeHorizontal;
@@ -49,12 +54,14 @@ public class Game {
 
         frame.add(controlPanel, BorderLayout.SOUTH);
 
+        // Ajout du logger pour afficher les actions
         logger = new JTextArea();
         logger.setEditable(false);
         JScrollPane loggerScrollPane = new JScrollPane(logger);
         loggerScrollPane.setPreferredSize(new Dimension(200, 800));
         frame.add(loggerScrollPane, BorderLayout.EAST);
 
+        // Création des panneaux de grille pour les joueurs
         player1GridPanel = createGridPanel();
         player1AttackGridPanel = createGridPanel();
         player2GridPanel = createGridPanel();
@@ -77,6 +84,7 @@ public class Game {
                 final int currentRow = row;
                 final int currentCol = col;
 
+                // Ajout d'un écouteur d'événements pour chaque bouton de la grille
                 button.addActionListener(e -> handleButtonClick(button, currentRow, currentCol, gridPanel));
 
                 gridButtons[row][col] = button;
@@ -84,6 +92,7 @@ public class Game {
             }
         }
 
+        // Assigner les boutons de la grille aux panneaux correspondants
         if (gridPanel == player1GridPanel) player1GridButtons = gridButtons;
         if (gridPanel == player1AttackGridPanel) player1AttackGridButtons = gridButtons;
         if (gridPanel == player2GridPanel) player2GridButtons = gridButtons;
@@ -99,18 +108,20 @@ public class Game {
         }
 
         if (!gameInProgress) {
-
+            // Placer un bateau si le jeu n'a pas encore commencé
             placeShip(button, row, col, gridPanel);
         } else {
-
+            // Attaquer si le jeu est en cours
             attack(button, row, col);
         }
     }
 
+    // Placer un bateau sur la grille
     private void placeShip(JButton button, int row, int col, JPanel gridPanel) {
         boolean[][] currentGrid = (currentPlayer == 1) ? player1Grid : player2Grid;
         int shipSize = shipsToPlace[currentShipIndex];
 
+        // Vérifier si le bateau peut être placé à cet endroit
         if (canPlaceShip(currentGrid, row, col, shipSize)) {
             for (int i = 0; i < shipSize; i++) {
                 if (placeHorizontal) {
@@ -124,6 +135,7 @@ public class Game {
                 }
             }
 
+            // Mettre à jour les instructions et passer au bateau suivant
             currentShipIndex++;
             if (currentShipIndex >= shipsToPlace.length) {
                 if (currentPlayer == 1) {
@@ -153,6 +165,7 @@ public class Game {
         }
     }
 
+    // Vérifier si un bateau peut être placé à cet endroit
     private boolean canPlaceShip(boolean[][] grid, int row, int col, int size) {
         if (placeHorizontal) {
             if (col + size > gridSize) return false;
@@ -168,9 +181,11 @@ public class Game {
         return true;
     }
 
+    // Attaquer un bateau sur la grille
     private void attack(JButton button, int row, int col) {
         boolean[][] targetGrid = (currentPlayer == 1) ? player2Grid : player1Grid;
 
+        // Vérifier si la case a déjà été attaquée
         if (targetGrid[row][col]) {
             button.setBackground(new Color(17, 212, 37));
             targetGrid[row][col] = false;
@@ -182,7 +197,7 @@ public class Game {
 
         button.setEnabled(false);
 
-
+        // Vérifier si le jeu est terminé
         if (isGameOver()) {
             JOptionPane.showMessageDialog(frame, "Player " + currentPlayer + " has won !");
             frame.dispose();
@@ -201,9 +216,11 @@ public class Game {
         frame.repaint();
     }
 
+    // Vérifier si le jeu est terminé
     private boolean isGameOver() {
         boolean[][] targetGrid = (currentPlayer == 1) ? player2Grid : player1Grid;
 
+        //
         for (int row = 0; row < gridSize; row++) {
             for (int col = 0; col < gridSize; col++) {
                 if (targetGrid[row][col]) {
@@ -215,15 +232,18 @@ public class Game {
         return true;
     }
 
+    // Enregistrer une action dans le logger
     private void logAction(String action) {
         logger.append(action + "\n");
         logger.setCaretPosition(logger.getDocument().getLength());
     }
 
+    // Affichage des coordonnées de la grille
     private String toGridCoordinate(int row, int col) {
         return "" + (char) ('A' + row) + (col + 1);
     }
 
+    // Mettre en pause ou reprendre le jeu
     private void togglePause() {
         gamePaused = !gamePaused;
         logAction("The game is " + (gamePaused ? "is paused" : "is back on") + ".");
