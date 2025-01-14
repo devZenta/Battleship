@@ -2,21 +2,29 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Game {
+
     private JFrame frame;
+
     private JPanel player1GridPanel, player1AttackGridPanel;
     private JPanel player2GridPanel, player2AttackGridPanel;
+
     private JButton[][] player1GridButtons, player1AttackGridButtons;
     private JButton[][] player2GridButtons, player2AttackGridButtons;
+
     private boolean[][] player1Grid, player2Grid;
     private int gridSize = 10;
+
     private int currentPlayer = 1;
+    private int currentShipIndex = 0;
+
     private JLabel instructionsLabel;
+    private boolean placeHorizontal = true;
+
     private boolean gameInProgress = false;
     private boolean gamePaused = false;
+
     private int[] shipsToPlace = {5, 4, 4, 3, 3, 2};
-    private int currentShipIndex = 0;
     private JTextArea logger;
-    private boolean placeHorizontal = true;
 
     public Game() {
 
@@ -161,7 +169,7 @@ public class Game {
             }
 
             // * Mettre à jour les instructions et passer au bateau suivant
-            
+
             currentShipIndex++;
             if (currentShipIndex >= shipsToPlace.length) {
                 if (currentPlayer == 1) {
